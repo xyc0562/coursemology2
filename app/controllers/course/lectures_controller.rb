@@ -6,7 +6,7 @@ class Course::LecturesController < Course::ComponentController
   def access_link #:nodoc:
     respond_to do |format|
       format.json {
-        link = @lecture.generate_classroom_link(current_user, can?(:manage, @lecture))
+        link = @lecture.handle_access_link(current_user, can?(:manage, @lecture))
         render json: { link: link }
       }
     end

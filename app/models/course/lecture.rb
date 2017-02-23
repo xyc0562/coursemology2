@@ -19,16 +19,19 @@ class Course::Lecture < ActiveRecord::Base
   DATE_ISO = '%Y-%m-%d'
   BRAINCERT_API_BASE_URL = 'https://api.braincert.com'
 
-  def generate_classroom_link(user, is_instructor)
-    diff = start_at - DateTime.now
-    unless currently_joinable?
-      err = diff > 0 ?
-        I18n.t(:'course.lectures.lesson_live_in',
-               desc: distance_of_time_in_words(diff)) :
-        I18n.t(:'course.lectures.lesson_already_conducted')
-      raise IllegalStateError.new err
-    end
+  def handle_access_link(user, is_instructor)
+    validates_classroom_joinable
     create_classroom unless classroom_id
+    generate_classroom_link user, is_instructor
+  end
+
+  def currently_joinable?
+    currently_active?
+  end
+
+  private
+
+  def generate_classroom_link(user, is_instructor)
     lesson_name = title
     params = {
       class_id: classroom_id,
@@ -42,8 +45,8 @@ class Course::Lecture < ActiveRecord::Base
     h = JSON.parse(res.body)
     result = nil
     if (error = h['error'])
-      msg = "Error generate access link for lesson #{id}.\nError is: \n#{error}\n" +
-        "Request params are:\n#{params}"
+      msg = "Error generate access link for lesson #{id}.\nError is: \n#{error}\n" \
+              "Request params are:\n#{params}"
       Rails.logger.error msg
     else
       result = h['encryptedlaunchurl']
@@ -52,11 +55,18 @@ class Course::Lecture < ActiveRecord::Base
     result
   end
 
-  def currently_joinable?
-    currently_active?
+  def validates_classroom_joinable
+    diff = start_at - Time.zone.now
+    unless currently_joinable?
+      if diff >0
+        err = I18n.t(:'course.lectures.lesson_live_in',
+                     desc: distance_of_time_in_words(diff))
+      else
+        err = I18n.t(:'course.lectures.lesson_already_conducted')
+      end
+      raise IllegalStateError.new(err)
+    end
   end
-
-  private
 
   def post(url, params)
     Net::HTTP.post_form URI.parse(url), params
@@ -87,7 +97,8 @@ class Course::Lecture < ActiveRecord::Base
     h = JSON.parse(res.body)
     result = nil
     if (error = h['error'])
-      msg = "Error scheduling for lesson #{id}.\nError is: \n#{error}\nRequest params are:\n#{params}"
+      msg = "Error scheduling for lesson #{id}.\nError is: \n#{error}\nRequest " \
+              "params are:\n#{params}"
       Rails.logger.error msg
     else
       result = h['class_id']
@@ -100,9 +111,8 @@ class Course::Lecture < ActiveRecord::Base
     return true unless classroom_id
     params = { cid: classroom_id }
     res = call_braincert_api '/v2/removeclass', params
-    h = JSON.parse(res.body)
-    if (error = h['error'])
-      Rails.logger.error "Error removing classroom for lesson #{id}.\nError is: \n#{error}\n" +
+    if (error = JSON.parse(res.body)['error'])
+      Rails.logger.error "Error removing classroom for lesson #{id}.\nError is: \n#{error}\n" \
                            "Request params are :\n#{params}"
       false
     else
