@@ -19,6 +19,7 @@ en:
       lesson_live_in: "lesson will go live in %{desc}, please refresh the page when it is live"
       go_to_lecture: "Go to virtual lecture"
       refresh_link: "Refresh Link"
+      waiting_for_instructor: "Waiting for instructor, refresh the page shortly"
       get_virtual_lecture_link: "Get Virtual Lecture Link"
       ended: "Lecture Ended"
       not_started: "Lecture hasn't started"

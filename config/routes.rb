@@ -149,7 +149,6 @@ Rails.application.routes.draw do
           end
         end
       end
-
       resources :lectures, concerns: :paginatable do
         get :access_link, on: :member
       end

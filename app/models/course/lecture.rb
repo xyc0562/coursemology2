@@ -53,8 +53,8 @@ class Course::Lecture < ActiveRecord::Base
   end
 
   def validates_classroom_joinable
+    return if currently_active?
     diff = start_at - Time.zone.now
-    return unless currently_active?
     if diff > 0
       err = I18n.t(:'course.lectures.lesson_live_in',
                    desc: distance_of_time_in_words(diff))
