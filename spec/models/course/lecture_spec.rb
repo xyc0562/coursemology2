@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 RSpec.describe Course::Lecture, type: :model do
@@ -10,7 +11,6 @@ RSpec.describe Course::Lecture, type: :model do
     let(:course) { create(:course) }
 
     describe 'create an lecture' do
-
       context 'when title is not present' do
         subject { build(:course_lecture, title: '') }
 

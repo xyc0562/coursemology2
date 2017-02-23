@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 FactoryGirl.define do
   factory :course_lecture, class: 'Course::Lecture' do
     course
@@ -13,7 +14,7 @@ FactoryGirl.define do
 
     trait :ended do
       start_at { 1.week.ago }
-      end_at { (24*7 + 1).hours.ago }
+      end_at { (24 * 7 + 1).hours.ago }
     end
   end
 end

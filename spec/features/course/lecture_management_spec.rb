@@ -25,10 +25,10 @@ RSpec.feature 'Course: Lectures' do
         expect(page).to have_css('div.has-error')
 
         lecture = build_stubbed(:course_lecture, course: course)
-        fill_in 'lecture_title',    with: lecture.title
-        fill_in 'lecture_content',  with: lecture.content
-        fill_in 'lecture_start_at',  with: lecture.start_at
-        fill_in 'lecture_end_at',  with: lecture.end_at
+        fill_in 'lecture_title', with: lecture.title
+        fill_in 'lecture_content', with: lecture.content
+        fill_in 'lecture_start_at', with: lecture.start_at
+        fill_in 'lecture_end_at', with: lecture.end_at
         expect do
           click_button I18n.t('helpers.submit.lecture.create')
         end.to change(course.lectures, :count).by(1)

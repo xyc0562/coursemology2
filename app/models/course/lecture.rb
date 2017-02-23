@@ -102,26 +102,11 @@ class Course::Lecture < ActiveRecord::Base
     res = call_braincert_api '/v2/removeclass', params
     h = JSON.parse(res.body)
     if (error = h['error'])
-      msg = "Error removing classroom for lesson #{id}.\nError is: \n#{error}\nRequest params are" +
-        ":\n#{params}"
-      Rails.logger.error msg
+      Rails.logger.error "Error removing classroom for lesson #{id}.\nError is: \n#{error}\n" +
+                           "Request params are :\n#{params}"
       false
     else
       true
-    end
-  end
-
-  def get_classroom
-    return nil unless classroom_id
-    res = call_braincert_api '/v2/getclass', class_id: classroom_id
-    h = JSON.parse(res.body)[0]
-    if (error = h['error'])
-      msg = "Error getting classroom for lesson #{id}.\nError is: \n#{error}\nRequest params are" +
-        ":\n#{params}"
-      Rails.logger.error msg
-      nil
-    else
-      h
     end
   end
 end
