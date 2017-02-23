@@ -7,7 +7,7 @@ class System::Admin::LecturesController < System::Admin::Controller
     @lectures = @lectures.includes(:creator).ordered_by_date.page(page_param)
   end
 
-  def new;end
+  def new; end
 
   def create
     if @lecture.save
@@ -18,7 +18,7 @@ class System::Admin::LecturesController < System::Admin::Controller
     end
   end
 
-  def edit;end
+  def edit; end
 
   def update
     if @lecture.update_attributes(lecture_params)

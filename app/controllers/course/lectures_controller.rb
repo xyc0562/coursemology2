@@ -17,9 +17,9 @@ class Course::LecturesController < Course::ComponentController
     @lectures = @lectures.page(page_param)
   end
 
-  def show;end #:nodoc:
+  def show; end #:nodoc:
 
-  def new;end #:nodoc:
+  def new; end #:nodoc:
 
   def create #:nodoc:
     if @lecture.save
@@ -30,7 +30,7 @@ class Course::LecturesController < Course::ComponentController
     end
   end
 
-  def edit;end #:nodoc:
+  def edit; end #:nodoc:
 
   def update #:nodoc:
     if @lecture.update_attributes(lecture_params)

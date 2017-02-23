@@ -1,6 +1,6 @@
 
 (function($) {
-  /* global JST, Routes */
+  /* global Routes */
   'use strict';
   $(document).on('click', '.gen-access-link', function() {
     var $this = $(this);
@@ -15,11 +15,11 @@
         if (link) {
           var $link = $('#lec-link-' + lectureId);
           if ($link.length) {
-            $link.attr('href', link)
+            $link.attr('href', link);
           } else {
             $this.closest('.access-link').prepend(
-              "<a id='lec-link-" + lectureId + "' target='_blank' href='" + link + "'>Go to" +
-              " virtual lecture</a>"
+              '<a id="lec-link-' + lectureId + '" target="_blank" href="' + link + '">Go to' +
+              ' virtual lecture</a>'
             );
           }
         } else {

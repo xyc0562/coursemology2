@@ -9,9 +9,9 @@
 .course-lectures {
   &.index {
     .lecture {
-      padding-left: 8px;
-
       @include timestamp;
+
+      padding-left: 8px;
 
       .content {
         font-size: 13px;
@@ -70,7 +70,7 @@
         border-left: 5px solid $gray-lighter;
         font-size: inherit;
         margin: 0 0 18px;
-        padding: 0 0 0 15px;
+        padding-left: 15px;
       }
 
       ul {

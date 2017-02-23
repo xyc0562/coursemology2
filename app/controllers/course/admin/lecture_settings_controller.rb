@@ -3,8 +3,7 @@ class Course::Admin::LectureSettingsController < Course::Admin::Controller
   add_breadcrumb :edit, :course_admin_lectures_path
   before_action :load_settings
 
-  def edit #:nodoc:
-  end
+  def edit; end #:nodoc:
 
   def update #:nodoc:
     if @settings.update(lecture_settings_params) && current_course.save
