@@ -12,11 +12,12 @@ educators to increase student engagement and make learning fun.
 
 ### System Requirements
 
-1. Ruby (>= 2.2.0)
+1. Ruby (>= 2.3.1)
 2. Ruby on Rails
 3. PostgreSQL
 4. ImageMagick or GraphicsMagick (For [MiniMagick](https://github.com/minimagick/minimagick))
 5. Node.js
+6. Yarn
 
 Coursemology uses [Ruby on Rails](http://rubyonrails.org/).
 In addition, some front-end components use
@@ -46,7 +47,7 @@ GoRails should help you to get started on Ruby on Rails.
  4. Install javascript dependencies
 
     ~~~ sh
-    $ npm install --prefix ./client
+    $ cd client && yarn; cd -
     ~~~
 
  5. Create and seed the database
@@ -59,6 +60,14 @@ GoRails should help you to get started on Ruby on Rails.
 
     ~~~ sh
     $ foreman start
+    ~~~
+    Or if you are not using foreman:
+    ~~~sh
+    # Start the webpack dev server:
+    $ cd client && yarn build:development
+
+    # Run this command to compile the assets before running the test suite.
+    $ cd client && yarn build:test
     ~~~
 
  7. You're all set! Simply login with the default username and password:

@@ -31,6 +31,7 @@ class Course::Assessment::Submission < ActiveRecord::Base
   schema_validations except: [:creator_id, :assessment_id]
   validate :validate_consistent_user, :validate_unique_submission, on: :create
   validate :validate_awarded_attributes, if: :published?
+  validates :submitted_at, presence: true, unless: :attempting?
 
   belongs_to :assessment, inverse_of: :submissions
 
@@ -59,15 +60,6 @@ class Course::Assessment::Submission < ActiveRecord::Base
   belongs_to :publisher, class_name: User.name, inverse_of: nil
 
   accepts_nested_attributes_for :answers
-
-  # @!attribute [r] submitted_at
-  #   Gets the time the submission was submitted.
-  #   @return [Time]
-  calculated :submitted_at, (lambda do
-    Course::Assessment::Answer.unscope(:order).where do
-      course_assessment_answers.submission_id == course_assessment_submissions.id
-    end.select { max(course_assessment_answers.submitted_at) }
-  end)
 
   # @!attribute [r] graded_at
   #   Gets the time the submission was graded.
@@ -110,9 +102,7 @@ class Course::Assessment::Submission < ActiveRecord::Base
 
   # @!method self.ordered_by_submitted date
   #   Orders the submissions by date of submission (newest submission first).
-  scope :ordered_by_submitted_date, (lambda do
-    all.calculated(:submitted_at).order('submitted_at DESC')
-  end)
+  scope :ordered_by_submitted_date, -> { order(submitted_at: :desc) }
 
   # @!method self.confirmed
   #   Returns submissions which have been submitted (which may or may not be graded).
@@ -166,8 +156,8 @@ class Course::Assessment::Submission < ActiveRecord::Base
   end
 
   # Returns all graded answers of the question in current submission.
-  def graded_answers(question)
-    answers.select { |a| a.question_id == question.id &&  a.graded? }
+  def evaluated_or_graded_answers(question)
+    answers.select { |a| a.question_id == question.id && (a.evaluated? || a.graded?) }
   end
 
   # Return the points awarded for the submission.

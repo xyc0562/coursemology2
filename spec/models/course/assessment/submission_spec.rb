@@ -98,6 +98,18 @@ RSpec.describe Course::Assessment::Submission do
           end
         end
       end
+
+      context 'when submission is submitted' do
+        let(:submission1_traits) { :submitted }
+        subject { submission1 }
+
+        context 'when submitted_at is nil' do
+          it 'is not valid' do
+            subject.submitted_at = nil
+            expect(subject).not_to be_valid
+          end
+        end
+      end
     end
 
     describe '.answers' do
@@ -316,10 +328,12 @@ RSpec.describe Course::Assessment::Submission do
         submission.assessment.questions.attempt(submission).each(&:save!)
       end
 
-      it 'propagates the finalise state to its answers' do
-        expect(submission.answers.all?(&:attempting?)).to be(true)
+      it 'propagates the finalise state to latest answers and sets the submitted_at time' do
+        expect(submission.latest_answers.all?(&:attempting?)).to be(true)
+        expect(submission.submitted_at).to be_nil
         submission.finalise!
-        expect(submission.answers.all?(&:submitted?)).to be(true)
+        expect(submission.latest_answers.all?(&:submitted?)).to be(true)
+        expect(submission.submitted_at).not_to be_nil
       end
 
       with_active_job_queue_adapter(:test) do
@@ -338,9 +352,24 @@ RSpec.describe Course::Assessment::Submission do
         end
 
         it 'finalises the rest of the answers' do
-          expect(submission.answers.all?(&:submitted?)).to be(false)
+          expect(submission.latest_answers.all?(&:submitted?)).to be(false)
           submission.finalise!
-          expect(submission.answers.all?(&:submitted?)).to be(true)
+          expect(submission.latest_answers.all?(&:submitted?)).to be(true)
+        end
+      end
+
+      context 'when there is an attempting answer that is not the latest answer' do
+        let(:answer) { submission.answers.first }
+        before do
+          create(:course_assessment_answer, submission: answer.submission,
+                                            question: answer.question)
+        end
+
+        it 'does not finalise the non-latest answer' do
+          older_answer = submission.answers.from_question(answer.question).first
+          expect(older_answer).to be_attempting
+          submission.finalise!
+          expect(older_answer).to be_attempting
         end
       end
     end
@@ -488,8 +517,9 @@ RSpec.describe Course::Assessment::Submission do
       context 'when the submission is submitted' do
         let(:submission1_traits) { :submitted }
 
-        it 'resets the experience points awarded' do
+        it 'resets the experience points awarded and submitted_at time' do
           expect(subject.points_awarded).to be_nil
+          expect(subject.submitted_at).to be_nil
         end
 
         it 'sets all latest answers in the submission to attempting' do
@@ -501,8 +531,9 @@ RSpec.describe Course::Assessment::Submission do
       context 'when the submission is published' do
         let(:submission1_traits) { :published }
 
-        it 'resets the experience points awarded' do
+        it 'resets the experience points awarded and submitted_at time' do
           expect(subject.points_awarded).to be_nil
+          expect(subject.submitted_at).to be_nil
         end
 
         it 'sets all latest answers in the submission to attempting' do

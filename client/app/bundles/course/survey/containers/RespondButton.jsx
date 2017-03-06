@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import moment from 'moment';
+import moment from 'lib/moment';
 import { browserHistory } from 'react-router';
 import RaisedButton from 'material-ui/RaisedButton';
 import { surveyShape } from '../propTypes';
@@ -41,7 +41,7 @@ const RespondButton = ({ dispatch, survey, courseId }) => {
   );
 
   let labelTranslation = translations.start;
-  let onTouchTap = () => dispatch(createResponse(courseId, id));
+  let onTouchTap = () => dispatch(createResponse(id));
   if (notYetOpen) {
     labelTranslation = translations.notOpen;
     onTouchTap = () => {};

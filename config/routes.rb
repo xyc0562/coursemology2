@@ -121,6 +121,9 @@ Rails.application.routes.draw do
         get 'announcements' => 'announcement_settings#edit'
         patch 'announcements' => 'announcement_settings#update'
 
+        get 'virtual_classrooms' => 'virtual_classroom_settings#edit'
+        patch 'virtual_classrooms' => 'virtual_classroom_settings#update'
+
         get 'assessments' => 'assessment_settings#edit'
         patch 'assessments' => 'assessment_settings#update'
 
@@ -144,6 +147,10 @@ Rails.application.routes.draw do
             resources :tabs, only: [:new, :create, :destroy]
           end
         end
+      end
+
+      resources :virtual_classrooms, concerns: :paginatable do
+        get :access_link, on: :member
       end
 
       resources :announcements, concerns: :paginatable
@@ -308,6 +315,7 @@ Rails.application.routes.draw do
 
       scope module: :survey do
         resources :surveys, only: [:index, :create, :show, :update, :destroy] do
+          get 'results', on: :member
           resources :questions, only: [:create, :update, :destroy]
           resources :responses, only: [:create, :show, :edit, :update]
         end

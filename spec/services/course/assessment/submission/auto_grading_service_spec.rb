@@ -23,6 +23,21 @@ RSpec.describe Course::Assessment::Submission::AutoGradingService do
         expect(submission.answers.map(&:reload).map(&:grade).all?(&:nil?)).to be(true)
       end
 
+      context 'when the submission has an answer in the attempting state' do
+        let(:answer) do
+          create(:course_assessment_answer_multiple_response,
+                 question: question.acting_as, submission: submission).answer
+        end
+
+        it 'submits and grades the answer' do
+          answer
+          expect(subject.grade(submission)).to eq(true)
+
+          expect(answer.reload.evaluated?).to be_truthy
+          expect(submission.answers.map(&:reload).all?(&:evaluated?)).to be(true)
+        end
+      end
+
       context 'when given a non-auto gradable answer' do
         let(:non_autograded_question) do
           create(:course_assessment_question_programming, assessment: assessment)
@@ -78,9 +93,7 @@ RSpec.describe Course::Assessment::Submission::AutoGradingService do
 
         context 'when submission is submitted before bonus end at' do
           before do
-            submission.answers.each do |answer|
-              answer.update_column(:submitted_at, 4.days.ago)
-            end
+            submission.update_column(:submitted_at, 4.days.ago)
             subject.grade(submission)
           end
 
@@ -92,9 +105,7 @@ RSpec.describe Course::Assessment::Submission::AutoGradingService do
 
         context 'when submission is submitted between bonus end at and end at' do
           before do
-            submission.answers.each do |answer|
-              answer.update_column(:submitted_at, 2.days.ago)
-            end
+            submission.update_column(:submitted_at, 2.days.ago)
             subject.grade(submission)
           end
 

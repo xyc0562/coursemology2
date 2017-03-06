@@ -65,9 +65,26 @@ module ApplicationHelper
     data = {
       name: 'server-context',
       'data-controller-name': controller.class.name.sub(/Controller$/, '').underscore,
-      'data-i18n-locale': I18n.locale
+      'data-i18n-locale': I18n.locale,
+      'data-time-zone': ActiveSupport::TimeZone::MAPPING[user_time_zone]
     }
 
     tag(:meta, data)
+  end
+
+  def user_time_zone
+    user_signed_in? ? current_user.time_zone : nil
+  end
+
+  # This helper will includes all webpack assets
+  def webpack_assets_tag
+    capture do
+      concat "\n"
+      concat javascript_include_tag(*webpack_asset_paths('manifest', extension: 'js'))
+      concat "\n"
+      concat javascript_include_tag(*webpack_asset_paths('vendor', extension: 'js'))
+      concat "\n"
+      concat javascript_include_tag(*webpack_asset_paths('coursemology', extension: 'js'))
+    end
   end
 end

@@ -10,9 +10,10 @@ module Course::Assessment::Submission::WorkflowEventConcern
 
   # Handles the finalisation of a submission.
   #
-  # This finalises all the answers as well.
+  # This finalises all latest answers as well.
   def finalise(_ = nil)
-    answers.select(&:attempting?).each(&:finalise!)
+    self.submitted_at = Time.zone.now
+    latest_answers.select(&:attempting?).each(&:finalise!)
   end
 
   # Handles the marking of a submission.
@@ -47,6 +48,7 @@ module Course::Assessment::Submission::WorkflowEventConcern
     self.draft_points_awarded = nil
     self.awarded_at = nil
     self.awarder = nil
+    self.submitted_at = nil
   end
 
   private

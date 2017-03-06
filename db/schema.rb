@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170222101701) do
+ActiveRecord::Schema.define(version: 20170306051518) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -173,6 +173,7 @@ ActiveRecord::Schema.define(version: 20170222101701) do
     t.datetime "updated_at",     :null=>false
     t.integer  "publisher_id",   :index=>{:name=>"fk__course_assessment_submissions_publisher_id"}, :foreign_key=>{:references=>"users", :name=>"fk_course_assessment_submissions_publisher_id", :on_update=>:no_action, :on_delete=>:no_action}
     t.datetime "published_at"
+    t.datetime "submitted_at"
   end
   add_index "course_assessment_submissions", ["assessment_id", "creator_id"], :name=>"unique_assessment_id_and_creator_id", :unique=>true
 
@@ -699,6 +700,20 @@ ActiveRecord::Schema.define(version: 20170222101701) do
     t.datetime "updated_at", :null=>false
   end
   add_index "course_video_submissions", ["video_id", "creator_id"], :name=>"index_course_video_submissions_on_video_id_and_creator_id", :unique=>true
+
+  create_table "course_virtual_classrooms", force: :cascade do |t|
+    t.integer  "course_id",                 :null=>false, :index=>{:name=>"fk__course_virtual_classrooms_course_id"}, :foreign_key=>{:references=>"courses", :name=>"fk_course_virtual_classrooms_course_id", :on_update=>:no_action, :on_delete=>:no_action}
+    t.text     "instructor_classroom_link"
+    t.integer  "classroom_id"
+    t.string   "title",                     :limit=>255, :null=>false
+    t.text     "content"
+    t.datetime "start_at",                  :null=>false
+    t.datetime "end_at",                    :null=>false
+    t.integer  "creator_id",                :null=>false, :index=>{:name=>"fk__course_virtual_classrooms_creator_id"}, :foreign_key=>{:references=>"users", :name=>"fk_course_virtual_classrooms_creator_id", :on_update=>:no_action, :on_delete=>:no_action}
+    t.integer  "updater_id",                :null=>false, :index=>{:name=>"fk__course_virtual_classrooms_updater_id"}, :foreign_key=>{:references=>"users", :name=>"fk_course_virtual_classrooms_updater_id", :on_update=>:no_action, :on_delete=>:no_action}
+    t.datetime "created_at",                :null=>false
+    t.datetime "updated_at",                :null=>false
+  end
 
   create_table "generic_announcements", force: :cascade do |t|
     t.string   "type",        :limit=>255, :null=>false
