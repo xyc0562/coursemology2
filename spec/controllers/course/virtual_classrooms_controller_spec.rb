@@ -39,7 +39,8 @@ RSpec.describe Course::VirtualClassroomsController, type: :controller do
 
         it { is_expected.to redirect_to(course_virtual_classrooms_path(course)) }
         it 'sets an error flash message' do
-          expect(flash[:danger]).to eq(I18n.t('course.virtual_classrooms.destroy.failure', error: ''))
+          expect(flash[:danger]).to eq(I18n.t('course.virtual_classrooms.destroy.failure',
+                                              error: ''))
         end
       end
     end

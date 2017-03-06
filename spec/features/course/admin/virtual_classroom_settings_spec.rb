@@ -24,8 +24,10 @@ RSpec.feature 'Course: Administration: VirtualClassroom' do
         fill_in 'virtual_classroom_settings_pagination', with: valid_pagination_count
         click_button 'update'
         expect(page).
-          to have_selector('div', text: I18n.t('course.admin.virtual_classroom_settings.update.success'))
-        expect(page).to have_field('virtual_classroom_settings_pagination', with: valid_pagination_count)
+          to have_selector('div',
+                           text: I18n.t('course.admin.virtual_classroom_settings.update.success'))
+        expect(page).to have_field('virtual_classroom_settings_pagination',
+                                   with: valid_pagination_count)
       end
 
       scenario 'I can change the virtual classrooms title' do
@@ -37,7 +39,8 @@ RSpec.feature 'Course: Administration: VirtualClassroom' do
         fill_in 'virtual_classroom_settings_title', with: new_title
         click_button 'update'
         expect(page).
-          to have_selector('div', text: I18n.t('course.admin.virtual_classroom_settings.update.success'))
+          to have_selector('div',
+                           text: I18n.t('course.admin.virtual_classroom_settings.update.success'))
         expect(page).to have_field('virtual_classroom_settings_title', with: new_title)
         expect(page).to have_selector('li a', text: new_title)
 
@@ -45,7 +48,8 @@ RSpec.feature 'Course: Administration: VirtualClassroom' do
         click_button 'update'
         expect(page).
           to have_selector('div', text: I18n.t('course.admin.virtual_classroom_settings.update.success'))
-        expect(page).to have_selector('li a', text: I18n.t('course.virtual_classrooms.sidebar_title'))
+        expect(page).to have_selector('li a',
+                                      text: I18n.t('course.virtual_classrooms.sidebar_title'))
       end
     end
   end
