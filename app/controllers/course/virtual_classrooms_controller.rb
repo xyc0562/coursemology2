@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 class Course::VirtualClassroomsController < Course::ComponentController
-  load_and_authorize_resource :virtual_classroom, through: :course, class: Course::VirtualClassroom.name
+  load_and_authorize_resource :virtual_classroom,
+                              through: :course,
+                              class: Course::VirtualClassroom.name
   before_action :add_virtual_classroom_breadcrumb
 
   def access_link #:nodoc:
-    @braincert_api_service = Course::VirtualClassroom::BraincertApiService.new(@virtual_classroom, @settings)
+    @braincert_api_service = Course::VirtualClassroom::BraincertApiService.new(
+      @virtual_classroom, @settings
+    )
     respond_to do |format|
       format.json do
         render_access_link

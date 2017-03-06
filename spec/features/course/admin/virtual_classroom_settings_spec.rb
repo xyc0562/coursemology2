@@ -47,7 +47,8 @@ RSpec.feature 'Course: Administration: VirtualClassroom' do
         fill_in 'virtual_classroom_settings_title', with: empty_title
         click_button 'update'
         expect(page).
-          to have_selector('div', text: I18n.t('course.admin.virtual_classroom_settings.update.success'))
+          to have_selector('div',
+                           text: I18n.t('course.admin.virtual_classroom_settings.update.success'))
         expect(page).to have_selector('li a',
                                       text: I18n.t('course.virtual_classrooms.sidebar_title'))
       end
