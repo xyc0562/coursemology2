@@ -15,6 +15,7 @@ class Course::VirtualClassroom < ActiveRecord::Base
   end
 
   private
+
   def convert_duration_to_end_at
     self.end_at = start_at + @duration.to_i.minutes if start_at && @duration
   end

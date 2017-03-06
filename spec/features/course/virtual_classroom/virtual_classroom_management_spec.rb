@@ -6,7 +6,9 @@ RSpec.feature 'Course: VirtualClassrooms' do
 
   with_tenant(:instance) do
     let(:course) { create(:course, :with_virtual_classroom_component_enabled) }
-    let!(:not_started_virtual_classroom) { create(:course_virtual_classroom, :not_started, course: course) }
+    let!(:not_started_virtual_classroom) do
+      create(:course_virtual_classroom, :not_started, course: course)
+    end
     let!(:valid_virtual_classroom) { create(:course_virtual_classroom, course: course) }
     let!(:ended_virtual_classroom) { create(:course_virtual_classroom, :ended, course: course) }
 
@@ -74,10 +76,16 @@ RSpec.feature 'Course: VirtualClassrooms' do
         visit course_virtual_classrooms_path(course)
         expect(page).to have_link(nil, href: new_course_virtual_classroom_path(course))
 
-        [not_started_virtual_classroom, valid_virtual_classroom, ended_virtual_classroom].each do |virtual_classroom|
+        [not_started_virtual_classroom,
+         valid_virtual_classroom,
+         ended_virtual_classroom].each do |virtual_classroom|
           expect(page).to have_content_tag_for(virtual_classroom)
-          expect(page).to have_link(nil, href: edit_course_virtual_classroom_path(course, virtual_classroom))
-          expect(page).to have_link(nil, href: course_virtual_classroom_path(course, virtual_classroom))
+          expect(page).to(
+            have_link(nil, href: edit_course_virtual_classroom_path(course, virtual_classroom))
+          )
+          expect(page).to(
+            have_link(nil, href: course_virtual_classroom_path(course, virtual_classroom))
+          )
         end
       end
 
@@ -107,11 +115,16 @@ RSpec.feature 'Course: VirtualClassrooms' do
         visit course_virtual_classrooms_path(course)
         expect(page).not_to have_link(nil, href: new_course_virtual_classroom_path(course))
 
-        [not_started_virtual_classroom, valid_virtual_classroom, ended_virtual_classroom].each do |virtual_classroom|
+        [not_started_virtual_classroom,
+         valid_virtual_classroom,
+         ended_virtual_classroom].each do |virtual_classroom|
           expect(page).to have_content_tag_for(virtual_classroom)
-          expect(page).
-            not_to have_link(nil, href: edit_course_virtual_classroom_path(course, virtual_classroom))
-          expect(page).not_to have_link(nil, href: course_virtual_classroom_path(course, virtual_classroom))
+          expect(page).not_to(
+            have_link(nil, href: edit_course_virtual_classroom_path(course, virtual_classroom))
+          )
+          expect(page).not_to(
+            have_link(nil, href: course_virtual_classroom_path(course, virtual_classroom))
+          )
         end
       end
     end
