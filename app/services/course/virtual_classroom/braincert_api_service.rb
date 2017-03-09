@@ -14,6 +14,26 @@ class Course::VirtualClassroom::BraincertApiService
     generate_classroom_link(user, is_instructor)
   end
 
+  def fetch_recorded_videos
+    return nil unless @virtual_classroom.classroom_id && @virtual_classroom.ended?
+    res = call_braincert_api '/v2/getclassrecording', class_id: @virtual_classroom.classroom_id
+    res_body = [JSON.parse(res.body)].flatten.select do |h|
+      h['id'].present? || h['status'] == 'error'
+    end
+    @virtual_classroom.update! recorded_videos: res_body
+    res_body
+  end
+
+  def fetch_recorded_video_link(record_id)
+    res = call_braincert_api('/v2/getrecording', record_id: record_id)
+    res_body = JSON.parse(res.body)
+    if res_body.is_a?(Hash)
+      error = res_body['error']
+      return [nil, I18n.t(:'course.virtual_classrooms.error_generating_video_link', error: error)]
+    end
+    [res_body[0]['record_url'], nil]
+  end
+
   private
 
   TIME_BRAINCERT = '%I:%M%p'
@@ -97,9 +117,7 @@ class Course::VirtualClassroom::BraincertApiService
       start_time: @virtual_classroom.start_at.in_time_zone(0).strftime(TIME_BRAINCERT),
       end_time: @virtual_classroom.end_at.in_time_zone(0).strftime(TIME_BRAINCERT),
       date: @virtual_classroom.start_at.in_time_zone(0).to_date.strftime(DATE_ISO),
-      ispaid: 0,
-      is_recurring: 0,
-      seat_attendees: 25, record: 1, isRegion: 7
+      ispaid: 0, is_recurring: 0, seat_attendees: 25, record: 1, isRegion: 2
     }
   end
 end
