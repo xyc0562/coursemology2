@@ -4,6 +4,11 @@ module Course::VirtualClassroom::StubbedBraincertApiService
     @virtual_classroom = virtual_classroom
   end
 
+  def fetch_recorded_videos
+    [{ name: 'Video 1', id: 1 },
+     { name: 'Video 2', id: 2 }]
+  end
+
   private
 
   def create_classroom

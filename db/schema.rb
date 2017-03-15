@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170307080839) do
+ActiveRecord::Schema.define(version: 20170308044737) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -715,6 +715,8 @@ ActiveRecord::Schema.define(version: 20170307080839) do
     t.integer  "updater_id",                :null=>false, :index=>{:name=>"fk__course_virtual_classrooms_updater_id"}, :foreign_key=>{:references=>"users", :name=>"fk_course_virtual_classrooms_updater_id", :on_update=>:no_action, :on_delete=>:no_action}
     t.datetime "created_at",                :null=>false
     t.datetime "updated_at",                :null=>false
+    t.integer  "instructor_id",             :index=>{:name=>"index_course_virtual_classrooms_on_instructor_id"}, :foreign_key=>{:references=>"users", :name=>"fk_course_virtual_classrooms_instructor_id", :on_update=>:cascade, :on_delete=>:nullify}
+    t.jsonb    "recorded_videos"
   end
 
   create_table "generic_announcements", force: :cascade do |t|
